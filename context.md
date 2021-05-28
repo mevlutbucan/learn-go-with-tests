@@ -108,7 +108,7 @@ t.Run("tells store to cancel work if request is cancelled", func(t *testing.T) {
       svr.ServeHTTP(response, request)
 
       if !store.cancelled {
-          t.Errorf("store was not told to cancel")
+          t.Error("store was not told to cancel")
       }
   })
 ```
@@ -214,14 +214,14 @@ type SpyStore struct {
 func (s *SpyStore) assertWasCancelled() {
 	s.t.Helper()
 	if !s.cancelled {
-		s.t.Errorf("store was not told to cancel")
+		s.t.Error("store was not told to cancel")
 	}
 }
 
 func (s *SpyStore) assertWasNotCancelled() {
 	s.t.Helper()
 	if s.cancelled {
-		s.t.Errorf("store was told to cancel")
+		s.t.Error("store was told to cancel")
 	}
 }
 ```
@@ -394,7 +394,7 @@ Our happy path should be... happy. Now we can fix the other test.
 
 ## Write the test first
 
-We need to test that we do not write any kind of response on the error case. Sadly `httptest.ResponseRecorder` doesn't have a way of figuring this out so we'll have to role our own spy to test for this.
+We need to test that we do not write any kind of response on the error case. Sadly `httptest.ResponseRecorder` doesn't have a way of figuring this out so we'll have to roll our own spy to test for this.
 
 ```go
 type SpyResponseWriter struct {
