@@ -21,7 +21,7 @@ To run it type `go run hello.go`.
 
 ## How it works
 
-When you write a program in Go you will have a `main` package defined with a `main` func inside it. Packages are ways of grouping up related Go code together.
+When you write a program in Go, you will have a `main` package defined with a `main` func inside it. Packages are ways of grouping up related Go code together.
 
 The `func` keyword is how you define a function with a name and a body.
 
@@ -77,7 +77,7 @@ go: cannot find main module; see 'go help modules'
 
 What's the problem? In a word, [modules](https://blog.golang.org/go116-module-changes). Luckily, the problem is easy to fix. Enter `go mod init hello` in your terminal. That will create a new file with the following contents:
 
-```go
+```
 module hello
 
 go 1.16
@@ -127,7 +127,7 @@ Another quality of life feature of Go is the documentation. You can launch the d
 
 The vast majority of the standard library has excellent documentation with examples. Navigating to [http://localhost:8000/pkg/testing/](http://localhost:8000/pkg/testing/) would be worthwhile to see what's available to you.
 
-If you don't have `godoc` command, then maybe you are using the newer version of Go (1.14 or later) which is [no longer including `godoc`](https://golang.org/doc/go1.14#godoc). You can manually install it with `go get golang.org/x/tools/cmd/godoc`.
+If you don't have `godoc` command, then maybe you are using the newer version of Go (1.14 or later) which is [no longer including `godoc`](https://golang.org/doc/go1.14#godoc). You can manually install it with `go install golang.org/x/tools/cmd/godoc@latest`.
 
 ### Hello, YOU
 
@@ -174,7 +174,7 @@ func Hello(name string) string {
 }
 ```
 
-If you try and run your tests again your `hello.go` will fail to compile because you're not passing an argument. Send in "world" to make it pass.
+If you try and run your tests again your `hello.go` will fail to compile because you're not passing an argument. Send in "world" to make it compile.
 
 ```go
 func main() {
@@ -242,7 +242,6 @@ Start by writing a new failing test
 
 ```go
 func TestHello(t *testing.T) {
-
 	t.Run("saying hello to people", func(t *testing.T) {
 		got := Hello("Chris")
 		want := "Hello, Chris"
@@ -251,7 +250,6 @@ func TestHello(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-
 	t.Run("say 'Hello, World' when an empty string is supplied", func(t *testing.T) {
 		got := Hello("")
 		want := "Hello, World"
@@ -260,7 +258,6 @@ func TestHello(t *testing.T) {
 			t.Errorf("got %q want %q", got, want)
 		}
 	})
-
 }
 ```
 
@@ -278,34 +275,33 @@ We can and should refactor our tests.
 
 ```go
 func TestHello(t *testing.T) {
-
-	assertCorrectMessage := func(t testing.TB, got, want string) {
-		t.Helper()
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
-	}
-
 	t.Run("saying hello to people", func(t *testing.T) {
 		got := Hello("Chris")
 		want := "Hello, Chris"
 		assertCorrectMessage(t, got, want)
 	})
 
-	t.Run("empty string defaults to 'World'", func(t *testing.T) {
+	t.Run("empty string defaults to 'world'", func(t *testing.T) {
 		got := Hello("")
 		want := "Hello, World"
 		assertCorrectMessage(t, got, want)
 	})
 
 }
+
+func assertCorrectMessage(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
 ```
 
 What have we done here?
 
-We've refactored our assertion into a function. This reduces duplication and improves readability of our tests. In Go you can declare functions inside other functions and assign them to variables. You can then call them, just like normal functions. We need to pass in `t *testing.T` so that we can tell the test code to fail when we need to.
+We've refactored our assertion into a new function. This reduces duplication and improves readability of our tests. We need to pass in `t *testing.T` so that we can tell the test code to fail when we need to.
 
-For helper functions, it's a good idea to accept a `testing.TB` which is an interface that `*testing.T` and `*testing.B` both satisfy, so you can call helper functions from a test, or a benchmark.
+For helper functions, it's a good idea to accept a `testing.TB` which is an interface that `*testing.T` and `*testing.B` both satisfy, so you can call helper functions from a test, or a benchmark (don't worry if words like "interface" mean nothing to you right now, it will be covered later).
 
 `t.Helper()` is needed to tell the test suite that this method is a helper. By doing this when it fails the line number reported will be in our _function call_ rather than inside our test helper. This will help other developers track down problems easier. If you still don't understand, comment it out, make a test fail and observe the test output. Comments in Go are a great way to add additional information to your code, or in this case, a quick way to tell the compiler to ignore a line. You can comment out the `t.Helper()` code by adding two forward slashes `//` at the beginning of the line. You should see that line turn grey or change to another color than the rest of your code to indicate it's now commented out.
 
@@ -409,7 +405,6 @@ func Hello(name string, language string) string {
 	if language == "Spanish" {
 		return "Hola, " + name
 	}
-
 	return englishHelloPrefix + name
 }
 ```
@@ -431,7 +426,6 @@ func Hello(name string, language string) string {
 	if language == spanish {
 		return spanishHelloPrefix + name
 	}
-
 	return englishHelloPrefix + name
 }
 ```
@@ -453,11 +447,9 @@ func Hello(name string, language string) string {
 	if language == spanish {
 		return spanishHelloPrefix + name
 	}
-
 	if language == french {
 		return frenchHelloPrefix + name
 	}
-
 	return englishHelloPrefix + name
 }
 ```
@@ -521,7 +513,7 @@ A few new concepts:
     * You can return whatever it's set to by just calling `return` rather than `return prefix`.
   * This will display in the Go Doc for your function so it can make the intent of your code clearer.
 * `default` in the switch case will be branched to if none of the other `case` statements match.
-* The function name starts with a lowercase letter. In Go public functions start with a capital letter and private ones start with a lowercase. We don't want the internals of our algorithm to be exposed to the world, so we made this function private.
+* The function name starts with a lowercase letter. In Go, public functions start with a capital letter and private ones start with a lowercase. We don't want the internals of our algorithm to be exposed to the world, so we made this function private.
 
 ## Wrapping up
 

@@ -1,6 +1,7 @@
 # Reading files
 
-**[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/reading-files)**
+- **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/reading-files)**
+- [Here is a video of me working through the problem and taking questions from the Twitch stream](https://www.youtube.com/watch?v=nXts4dEJnkU)
 
 In this chapter we're going to learn how to read some files, get some data out of them, and do something useful.
 
@@ -26,7 +27,7 @@ The body of posts starts after the `---`
 ```go
 type Post struct {
 	Title, Description, Body string
-	Tags []string
+	Tags                     []string
 }
 ```
 
@@ -87,7 +88,7 @@ For our tests, the package [testing/fstest](https://golang.org/pkg/testing/fstes
 Given this information, the following feels like a better approach,
 
 ```go
-var posts blogposts.Post
+var posts []blogposts.Post
 posts = blogposts.NewPostsFromFS(someFS)
 ```
 
@@ -112,16 +113,16 @@ import (
 )
 
 func TestNewBlogPosts(t *testing.T) {
-    fs := fstest.MapFS{
-        "hello world.md":  {Data: []byte("hi")},
-        "hello-world2.md": {Data: []byte("hola")},
-    }
+	fs := fstest.MapFS{
+		"hello world.md":  {Data: []byte("hi")},
+		"hello-world2.md": {Data: []byte("hola")},
+	}
 
-    posts := blogposts.NewPostsFromFS(fs)
+	posts := blogposts.NewPostsFromFS(fs)
 
-    if len(posts) != len(fs) {
-        t.Errorf("got %d posts, wanted %d posts", len(posts), len(fs))
-    }
+	if len(posts) != len(fs) {
+		t.Errorf("got %d posts, wanted %d posts", len(posts), len(fs))
+	}
 }
 
 ```
@@ -168,7 +169,6 @@ package blogposts
 import "testing/fstest"
 
 type Post struct {
-
 }
 
 func NewPostsFromFS(fileSystem fstest.MapFS) []Post {
@@ -189,7 +189,7 @@ We _could_ ["slime"](https://deniseyu.github.io/leveling-up-tdd/) this to make i
 
 ```go
 func NewPostsFromFS(fileSystem fstest.MapFS) []Post {
-	return []Post{{},{}}
+	return []Post{{}, {}}
 }
 ```
 
@@ -241,20 +241,20 @@ We parked error handling earlier when we focused on making the happy-path work. 
 
 ```go
 func TestNewBlogPosts(t *testing.T) {
-    fs := fstest.MapFS{
-        "hello world.md":  {Data: []byte("hi")},
-        "hello-world2.md": {Data: []byte("hola")},
-    }
+	fs := fstest.MapFS{
+		"hello world.md":  {Data: []byte("hi")},
+		"hello-world2.md": {Data: []byte("hola")},
+	}
 
-    posts, err := blogposts.NewPostsFromFS(fs)
+	posts, err := blogposts.NewPostsFromFS(fs)
 
-    if err != nil {
-        t.Fatal(err)
-    }
+	if err != nil {
+		t.Fatal(err)
+	}
 
-    if len(posts) != len(fs) {
-        t.Errorf("got %d posts, wanted %d posts", len(posts), len(fs))
-    }
+	if len(posts) != len(fs) {
+		t.Errorf("got %d posts, wanted %d posts", len(posts), len(fs))
+	}
 }
 ```
 
@@ -283,7 +283,8 @@ type StubFailingFS struct {
 func (s StubFailingFS) Open(name string) (fs.File, error) {
 	return nil, errors.New("oh no, i always fail")
 }
-
+```
+```go
 // later
 _, err := blogposts.NewPostsFromFS(StubFailingFS{})
 ```
@@ -307,12 +308,12 @@ func TestNewBlogPosts(t *testing.T) {
 	}
 
 	// rest of test code cut for brevity
-    got := posts[0]
-    want := blogposts.Post{Title: "Post 1"}
+	got := posts[0]
+	want := blogposts.Post{Title: "Post 1"}
 
-    if !reflect.DeepEqual(got, want) {
-        t.Errorf("got %+v, want %+v", got, want)
-    }
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %+v, want %+v", got, want)
+	}
 }
 ```
 
@@ -504,11 +505,11 @@ Description: Description 2`
 		"hello-world2.md": {Data: []byte(secondBody)},
 	}
 
-    // rest of test code cut for brevity
-    assertPost(t, posts[0], blogposts.Post{
-        Title: "Post 1",
-        Description: "Description 1",
-    })
+	// rest of test code cut for brevity
+	assertPost(t, posts[0], blogposts.Post{
+		Title:       "Post 1",
+		Description: "Description 1",
+	})
 
 }
 ```
@@ -684,7 +685,7 @@ The last iteration on our happy path is to extract the body.
 
 Here's a reminder of the proposed file format.
 
-```
+```markdown
 Title: Hello, TDD world!
 Description: First post on our wonderful blog
 Tags: tdd, go

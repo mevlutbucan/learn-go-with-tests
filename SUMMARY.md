@@ -22,6 +22,13 @@
 * [Intro to property based tests](roman-numerals.md)
 * [Maths](math.md)
 * [Reading files](reading-files.md)
+* [Templating](html-templates.md)
+* [Generics](generics.md)
+* [Revisiting arrays and slices with generics](revisiting-arrays-and-slices-with-generics.md)
+
+## Testing fundamentals
+
+* [Introduction to acceptance tests](intro-to-acceptance-tests.md)
 
 ## Build an application
 
@@ -44,6 +51,5 @@
 
 * [Why unit tests and how to make them work for you](why.md)
 * [Anti-patterns](anti-patterns.md)
-* [Intro to generics](intro-to-generics.md)
 * [Contributing](contributing.md)
 * [Chapter Template](template.md)

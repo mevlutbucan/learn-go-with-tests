@@ -76,7 +76,7 @@ These tests are sometimes called 'acceptance tests', sometimes called
 'feature test'. The idea is that you write a really high level test to
 describe what you're trying to achieve - a user clicks a button on a website,
 and they see a complete list of the Pokémon they've caught, for instance.
-When we've written that test, we can then write test more tests - unit tests -
+When we've written that test, we can then write more tests - unit tests -
 that build towards a working system that will pass the acceptance test. So
 for our example these tests might be about rendering a webpage with a button,
 testing route handlers on a web server, performing database look ups, etc.
@@ -273,7 +273,7 @@ This is called the 'unit circle' because... well, the radius is 1 unit!
 
 The circumference of the circle is made of points on the grid - more
 coordinates. The x and y components of each of these coordinates form
-a triangle, the hypotenuse of which is always 1 - the radius of the circle
+a triangle, the hypotenuse of which is always 1 (i.e. the radius of the circle).
 
 ![picture of the unit circle with a point defined on the circumference](math/images/unit_circle_coords.png)
 
@@ -533,11 +533,11 @@ Try this
 
 ```go
 func main() {
-  fmt.Println(10.0/zero())
+	fmt.Println(10.0 / zero())
 }
 
 func zero() float64 {
-  return 0.0
+	return 0.0
 }
 ```
 
@@ -552,15 +552,15 @@ import (
 )
 
 func main() {
-  fmt.Println(secondsinradians())
+	fmt.Println(secondsinradians())
 }
 
 func zero() float64 {
-  return 0.0
+	return 0.0
 }
 
 func secondsinradians() float64 {
-    return (math.Pi / (30 / (float64(zero()))))
+	return (math.Pi / (30 / (float64(zero()))))
 }
 ```
 
@@ -670,7 +670,7 @@ We now want the equation that produces X and Y. Let's write it into seconds:
 
 ```go
 func secondHandPoint(t time.Time) Point {
-    angle := secondsInRadians(t)
+	angle := secondsInRadians(t)
 	x := math.Sin(angle)
 	y := math.Cos(angle)
 
@@ -840,11 +840,11 @@ directory, called (confusingly), `clockface`. In there we'll put the `main`
 package that will create the binary that will build an SVG:
 
 ```
-├── clockface
-│   └── main.go
-├── clockface.go
-├── clockface_acceptance_test.go
-└── clockface_test.go
+|-- clockface
+|       |-- main.go
+|-- clockface.go
+|-- clockface_acceptance_test.go
+|-- clockface_test.go
 ```
 
 Inside `main.go`, you'll start with this code but change the import for the
@@ -967,7 +967,8 @@ to parse it.
 [`encoding/xml`][xml] is the Go package that can handle all things to do with
 simple XML parsing.
 
-The function [`xml.Unmarshall`](https://godoc.org/encoding/xml#Unmarshal) takes
+
+The function [`xml.Unmarshal`](https://pkg.go.dev/encoding/xml#Unmarshal) takes
 a `[]byte` of XML data, and a pointer to a struct for it to get unmarshalled in
 to.
 
@@ -976,7 +977,7 @@ working out what the correct names for all of the nodes and attributes, and how
 to write the correct structure but, happily, someone has written
 [`zek`](https://github.com/miku/zek) a program that will automate all of that
 hard work for us.  Even better, there's an online version at
-[https://www.onlinetool.io/xmltogo/](https://www.onlinetool.io/xmltogo/). Just
+https://www.onlinetool.io/xmltogo/. Just
 paste the SVG from the top of the file into one box and - bam - out pops:
 
 ```go
@@ -1034,7 +1035,7 @@ func TestSVGWriterAtMidnight(t *testing.T) {
 ```
 
 We write the output of `clockface.SVGWriter` to a `bytes.Buffer`
-and then `Unmarshall` it into an `Svg`. We then look at each `Line` in the `Svg`
+and then `Unmarshal` it into an `Svg`. We then look at each `Line` in the `Svg`
 to see if any of them have the expected `X2` and `Y2` values. If we get a match
 we return early (passing the test); if not we fail with a (hopefully)
 informative message.
@@ -1108,7 +1109,7 @@ of precision we're expecting for the coordinates. Let's say three decimal
 places.
 
 ```go
-    fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
+	fmt.Fprintf(w, `<line x1="150" y1="150" x2="%.3f" y2="%.3f" style="fill:none;stroke:#f00;stroke-width:3px;"/>`, p.X, p.Y)
 ```
 
 And after we update our expectations in the test
@@ -1260,14 +1261,13 @@ func TestSVGWriterSecondHand(t *testing.T) {
 	}
 }
 
-
 func containsLine(l Line, ls []Line) bool {
-    for _, line := range ls {
-        if line == l {
-            return true
-        }
-    }
-    return false
+	for _, line := range ls {
+		if line == l {
+			return true
+		}
+	}
+	return false
 }
 ```
 
@@ -1395,7 +1395,7 @@ How much is that tiny little bit? Well...
 
 ### Try to run the test
 
-```go
+```
 clockface_test.go:62: Wanted 0.012217304763960306 radians, but got 3.141592653589793
 ```
 
@@ -1428,7 +1428,7 @@ math.Pi / (30 / float64(t.Minute()))
 
 And...
 
-```go
+```
 PASS
 ok  	clockface	0.007s
 ```
@@ -2202,4 +2202,4 @@ tests. It is an investment.
 [mathcos]: https://golang.org/pkg/math/#Cos
 [floatingpoint]: https://0.30000000000000004.com/
 [phlip]: http://wiki.c2.com/?PhlIp
-[xml]: https://godoc.org/encoding/xml
+[xml]: https://pkg.go.dev/encoding/xml

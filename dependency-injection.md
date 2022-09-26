@@ -2,7 +2,7 @@
 
 **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/di)**
 
-It is assumed that you have read the structs section before as some understanding of interfaces will be needed for this.
+It is assumed that you have read the [structs section](./structs-methods-and-interfaces.md) before as some understanding of interfaces will be needed for this.
 
 There are _a lot_ of misunderstandings around dependency injection around the programming community. Hopefully, this guide will show you how
 
@@ -25,11 +25,11 @@ But how can we test this? Calling `fmt.Printf` prints to stdout, which is pretty
 
 What we need to do is to be able to **inject** \(which is just a fancy word for pass in\) the dependency of printing.
 
-**Our function doesn't need to care **_**where**_** or **_**how**_** the printing happens, so we should accept an **_**interface**_** rather than a concrete type.**
+**Our function doesn't need to care _where_ or _how_ the printing happens, so we should accept an _interface_ rather than a concrete type.**
 
 If we do that, we can then change the implementation to print to something we control so that we can test it. In "real life" you would inject in something that writes to stdout.
 
-If you look at the source code of `fmt.Printf` you can see a way for us to hook in
+If you look at the source code of [`fmt.Printf`](https://pkg.go.dev/fmt#Printf) you can see a way for us to hook in
 
 ```go
 // It returns the number of bytes written and any write error encountered.
@@ -60,6 +60,8 @@ type Writer interface {
 }
 ```
 
+From this we can infer that `os.Stdout` implements `io.Writer`; `Printf` passes `os.Stdout` to `Fprintf` which expects an `io.Writer`.
+
 As you write more Go code you will find this interface popping up a lot because it's a great general purpose interface for "put this data somewhere".
 
 So we know under the covers we're ultimately using `Writer` to send our greeting somewhere. Let's use this existing abstraction to make our code testable and more reusable.
@@ -80,7 +82,7 @@ func TestGreet(t *testing.T) {
 }
 ```
 
-The `Buffer` type from the `bytes` package implements the `Writer` interface.
+The `Buffer` type from the `bytes` package implements the `Writer` interface, because it has the method `Write(p []byte) (n int, err error)`.
 
 So we'll use it in our test to send in as our `Writer` and then we can check what was written to it after we invoke `Greet`
 
@@ -142,13 +144,13 @@ If we change our code to use the more general purpose interface we can now use i
 package main
 
 import (
-    "fmt"
-    "os"
-    "io"
+	"fmt"
+	"io"
+	"os"
 )
 
 func Greet(writer io.Writer, name string) {
-    fmt.Fprintf(writer, "Hello, %s", name)
+	fmt.Fprintf(writer, "Hello, %s", name)
 }
 
 func main() {
@@ -168,26 +170,26 @@ Run the following
 package main
 
 import (
-    "fmt"
-    "io"
-    "log"
-    "net/http"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
 )
 
 func Greet(writer io.Writer, name string) {
-    fmt.Fprintf(writer, "Hello, %s", name)
+	fmt.Fprintf(writer, "Hello, %s", name)
 }
 
 func MyGreeterHandler(w http.ResponseWriter, r *http.Request) {
-    Greet(w, "world")
+	Greet(w, "world")
 }
 
 func main() {
-    log.Fatal(http.ListenAndServe(":5000", http.HandlerFunc(MyGreeterHandler)))
+	log.Fatal(http.ListenAndServe(":5001", http.HandlerFunc(MyGreeterHandler)))
 }
 ```
 
-Run the program and go to [http://localhost:5000](http://localhost:5000). You'll see your greeting function being used.
+Run the program and go to [http://localhost:5001](http://localhost:5001). You'll see your greeting function being used.
 
 HTTP servers will be covered in a later chapter so don't worry too much about the details.
 
