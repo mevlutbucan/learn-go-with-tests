@@ -20,12 +20,14 @@
 - [日本語](https://andmorefine.gitbook.io/learn-go-with-tests/)
 - [한국어](https://miryang.gitbook.io/learn-go-with-tests/)
 - [Türkçe](https://halilkocaoz.gitbook.io/go-programlama-dilini-ogren/)
+- [فارسی](https://go-yaad-begir.gitbook.io/go-ba-test/)
 
 ## Support me
 
 I am proud to offer this resource for free, but if you wish to give some appreciation:
 
 - [Tweet me @quii](https://twitter.com/quii)
+- <a rel="me" href="https://mastodon.cloud/@quii">Mastodon</a>
 - [Buy me a coffee :coffee:](https://www.buymeacoffee.com/quii)
 - [Sponsor me on GitHub](https://github.com/sponsors/quii)
 
@@ -85,7 +87,10 @@ By the end of this, you should have a strong grasp as to how to iteratively writ
 
 Covering other subjects around testing.
 
-* [Introduction to acceptance tests] - Learn how to write acceptance tests for your code, with a real-world example for gracefully shutting down a HTTP server
+* [Introduction to acceptance tests](intro-to-acceptance-tests.md) - Learn how to write acceptance tests for your code, with a real-world example for gracefully shutting down a HTTP server
+* [Scaling acceptance tests](scaling-acceptance-tests.md) - Learn techniques to manage the complexity of writing acceptance tests for non-trivial systems.
+* [Working without mocks, stubs and spies](working-without-mocks.md) - Learn about how to use fakes and contracts to create more realistic and maintainable tests.
+* [Refactoring Checklist](refactoring-checklist.md) - Some discussion on what refactoring is, and some basic tips on how to do it.
 
 ### Questions and answers
 
@@ -102,7 +107,7 @@ If you have such a question raise it as an issue on github and I'll try and find
 
 ### Meta / Discussion
 
-* [Why](why.md) - Watch a video, or read about why unit testing and TDD is important
+* [Why unit tests and how to make them work for you](why.md) - Watch a video, or read about why unit testing and TDD is important
 * [Anti-patterns](anti-patterns.md) - A short chapter on TDD and unit testing anti-patterns
 
 ## Contributing
@@ -162,7 +167,7 @@ Taking my experience of learning with a group and my own personal way I am going
 * [Installed Go](https://golang.org/)
 * A text editor
 * Some experience with programming. Understanding of concepts like `if`, variables, functions etc.
-* Comfortable with using the terminal
+* Comfortable using the terminal
 
 ## Feedback
 

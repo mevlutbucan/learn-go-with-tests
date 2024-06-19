@@ -121,7 +121,7 @@ func TestWallet(t *testing.T) {
 
 	got := wallet.Balance()
 
-	fmt.Printf("address of balance in test is %v \n", &wallet.balance)
+	fmt.Printf("address of balance in test is %p \n", &wallet.balance)
 
 	want := 10
 
@@ -133,13 +133,13 @@ func TestWallet(t *testing.T) {
 
 ```go
 func (w Wallet) Deposit(amount int) {
-	fmt.Printf("address of balance in Deposit is %v \n", &w.balance)
+	fmt.Printf("address of balance in Deposit is %p \n", &w.balance)
 	w.balance += amount
 }
 ```
 
-The `\n` escape character prints a new line after outputting the memory address.
-We get the pointer (memory address) of something by placing an `&` character at the beginning of the symbol.
+The `%p` placeholder prints memory addresses in base 16 notation with leading `0x`s and the `\n` escape character prints a new line.
+Note that we get the pointer (memory address) of something by placing an `&` character at the beginning of the symbol.
 
 Now re-run the test
 
@@ -455,6 +455,7 @@ Update our helper for a `string` to compare against.
 ```go
 assertError := func(t testing.TB, got error, want string) {
 	t.Helper()
+
 	if got == nil {
 		t.Fatal("didn't get an error but wanted one")
 	}
@@ -464,6 +465,8 @@ assertError := func(t testing.TB, got error, want string) {
 	}
 }
 ```
+
+As you can see `Error`s can be converted to a string with the `.Error()` method, which we do in order to compare it with the string we want. We are also making sure that the error is not `nil` to ensure we don't call `.Error()` on `nil`.
 
 And then update the caller
 

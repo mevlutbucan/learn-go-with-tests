@@ -342,7 +342,7 @@ With embed, the files are included in your Go program when you build it. This me
 
 What's handy is you can not only embed individual files, but also file systems; and that filesystem implements [io/fs](https://pkg.go.dev/io/fs) which means your code doesn't need to care what kind of file system it is working with.
 
-If you wish to use different templates depending on configuration though, you may wish to stick to loading templates from disk in the more coventional way.
+If you wish to use different templates depending on configuration though, you may wish to stick to loading templates from disk in the more conventional way.
 
 ## Next: Make the template "nice"
 
@@ -510,6 +510,14 @@ And `bottom.gohtml`
 
 (Obviously, feel free to put whatever markup you like!)
 
+We now need to specify a specific template to run. In the blog renderer, change the `Execute` command to `ExecuteTemplate`
+
+```go
+if err := templ.ExecuteTemplate(w, "blog.gohtml", p); err != nil {
+	return err
+}
+```
+
 Re-run your test. A new "received" file should be made and the test will fail. Check it over and if you're happy, approve it by copying it over the old version. Re-run the test again and it should pass.
 
 ## An excuse to mess around with Benchmarking
@@ -523,7 +531,7 @@ func Render(w io.Writer, p Post) error {
 		return err
 	}
 
-	if err := templ.Execute(w, p); err != nil {
+	if err := templ.ExecuteTemplate(w, "blog.gohtml", p); err != nil {
 		return err
 	}
 
@@ -580,7 +588,7 @@ func NewPostRenderer() (*PostRenderer, error) {
 
 func (r *PostRenderer) Render(w io.Writer, p Post) error {
 
-	if err := r.templ.Execute(w, p); err != nil {
+	if err := r.templ.ExecuteTemplate(w, "blog.gohtml", p); err != nil {
 		return err
 	}
 
@@ -659,7 +667,7 @@ We'll leave this as an exercise for you, the reader. You should be able to find 
 
 **Note**. Be careful not to worry too much about explicitly testing how a 3rd party library behaves in unit tests. 
 
-Writing tests against code you don't control is wasteful and adds maintenance overhead. Sometimes you may wish to use [dependency injection](/dependency-injection.md) to control a dependency and mock its behaviour for a test. 
+Writing tests against code you don't control is wasteful and adds maintenance overhead. Sometimes you may wish to use [dependency injection](./dependency-injection.md) to control a dependency and mock its behaviour for a test.
 
 In this case though, I view converting the markdown into HTML as implementation detail of rendering, and our approval tests should give us enough confidence.
 

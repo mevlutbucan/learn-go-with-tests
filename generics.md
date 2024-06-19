@@ -2,7 +2,7 @@
 
 **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/generics)**
 
-This chapter will give you an introduction to generics, dispel reservations you may have about them and, give you an idea how to simplify some of your code in the future. After reading this you'll know how to write:
+This chapter will give you an introduction to generics, dispel reservations you may have about them, and give you an idea how to simplify some of your code in the future. After reading this you'll know how to write:
 
 - A function that takes generic arguments
 - A generic data-structure
@@ -105,7 +105,7 @@ So what's the problem?
 By using `interface{}` the compiler can't help us when writing our code, because we're not telling it anything useful about the types of things passed to the function. Try comparing two different types.
 
 ```go
-AssertNotEqual(1, "1")
+AssertEqual(1, "1")
 ```
 
 In this case, we get away with it; the test compiles, and it fails as we'd hope, although the error message `got 1, want 1` is unclear; but do we want to be able to compare strings with integers? What about comparing a `Person` with an `Airport`?
@@ -184,7 +184,7 @@ func InterfaceyFoo(x, y interface{})
 
 What's the point of generics here? Doesn't `any` describe... anything?
 
-In terms of constraints, `any` does mean "anything" and so does `interface{}`. In fact, `any` was added in 1.18 and is _just an alias for `interface`_.
+In terms of constraints, `any` does mean "anything" and so does `interface{}`. In fact, `any` was added in 1.18 and is _just an alias for `interface{}`_.
 
 The difference with the generic version is _you're still describing a specific type_ and what that means is we've still constrained this function to only work with _one_ type.
 
@@ -378,14 +378,14 @@ Even if we have the discipline not to do this, the code is still unpleasant to w
 Add the following test,
 
 ```go
-t.Run("interface stack dx is horrid", func(t *testing.T) {
+t.Run("interface stack DX is horrid", func(t *testing.T) {
 	myStackOfInts := new(StackOfInts)
 
 	myStackOfInts.Push(1)
 	myStackOfInts.Push(2)
 	firstNum, _ := myStackOfInts.Pop()
 	secondNum, _ := myStackOfInts.Pop()
-	AssertEqual(firstNum+secondNum, 3)
+	AssertEqual(t, firstNum+secondNum, 3)
 })
 ```
 
@@ -437,7 +437,7 @@ func (s *Stack[T]) Push(value T) {
 }
 
 func (s *Stack[T]) IsEmpty() bool {
-	return len(s.values)==0
+	return len(s.values) == 0
 }
 
 func (s *Stack[T]) Pop() (T, bool) {
@@ -446,7 +446,7 @@ func (s *Stack[T]) Pop() (T, bool) {
 		return zero, false
 	}
 
-	index := len(s.values) -1
+	index := len(s.values) - 1
 	el := s.values[index]
 	s.values = s.values[:index]
 	return el, true
@@ -551,7 +551,7 @@ When you consider that if you've used arrays, slices or maps; you've _already be
 
 ```
 var myApples []Apples
-// You cant do this!
+// You can't do this!
 append(myApples, Orange{})
 ```
 

@@ -11,6 +11,7 @@
 I am proud to offer this resource for free, but if you wish to give some appreciation
 
 - [Tweet me @quii](https://twitter.com/quii)
+- <a rel="me" href="https://mastodon.cloud/@quii">Mastodon</a>
 - [Buy me a coffee](https://www.buymeacoffee.com/quii)
 - [Sponsor me on GitHub](https://github.com/sponsors/quii)
 
@@ -79,7 +80,7 @@ Taking my experience of learning with a group and my own personal way I am going
 * [Installed Go](https://golang.org/)
 * A text editor
 * Some experience with programming. Understanding of concepts like `if`, variables, functions etc.
-* Comfortable with using the terminal
+* Comfortable using the terminal
 
 ## Feedback
 

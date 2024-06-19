@@ -155,7 +155,8 @@ func TestSearch(t *testing.T) {
 
 The way to handle this scenario in Go is to return a second argument which is an `Error` type.
 
-`Error`s can be converted to a string with the `.Error()` method, which we do when passing it to the assertion. We are also protecting `assertStrings` with `if` to ensure we don't call `.Error()` on `nil`.
+Notice that as we've seen in the [pointers and error section](./pointers-and-errors.md) here in order to asset the error message
+we first check that the error is not `nil` and then use `.Error()` method to get the string which we can then pass to the assertion.
 
 ## Try and run the test
 
@@ -245,9 +246,7 @@ func TestAdd(t *testing.T) {
 		t.Fatal("should find added word:", err)
 	}
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
-	}
+	assertStrings(t, got, want)
 }
 ```
 
@@ -330,10 +329,7 @@ func assertDefinition(t testing.TB, dictionary Dictionary, word, definition stri
 	if err != nil {
 		t.Fatal("should find added word:", err)
 	}
-
-	if definition != got {
-		t.Errorf("got %q want %q", got, definition)
-	}
+	assertStrings(t, got, definition)
 }
 ```
 
@@ -368,16 +364,9 @@ func TestAdd(t *testing.T) {
 		assertDefinition(t, dictionary, word, definition)
 	})
 }
-
-func assertError(t testing.TB, got, want error) {
-	t.Helper()
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
-	}
-}
 ```
 
-For this test, we modified `Add` to return an error, which we are validating against a new error variable, `ErrWordExists`. We also modified the previous test to check for a `nil` error, as well as the `assertError` function.
+For this test, we modified `Add` to return an error, which we are validating against a new error variable, `ErrWordExists`. We also modified the previous test to check for a `nil` error.
 
 ## Try to run test
 
@@ -508,7 +497,7 @@ There is no refactoring we need to do on this since it was a simple change. Howe
 t.Run("existing word", func(t *testing.T) {
 	word := "test"
 	definition := "this is just a test"
-    dictionary := Dictionary{word: definition}
+	dictionary := Dictionary{word: definition}
 	newDefinition := "new definition"
 
 	err := dictionary.Update(word, newDefinition)

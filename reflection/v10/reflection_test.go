@@ -150,9 +150,10 @@ func assertContains(t testing.TB, haystack []string, needle string) {
 	for _, x := range haystack {
 		if x == needle {
 			contains = true
+			break
 		}
 	}
 	if !contains {
-		t.Errorf("expected %+v to contain %q but it didn't", haystack, needle)
+		t.Errorf("expected %v to contain %q but it didn't", haystack, needle)
 	}
 }

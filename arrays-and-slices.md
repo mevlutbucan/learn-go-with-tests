@@ -290,7 +290,7 @@ Go can let you write [_variadic functions_](https://gobyexample.com/variadic-fun
 
 ```go
 func SumAll(numbersToSum ...[]int) []int {
-	return
+	return nil
 }
 ```
 
@@ -337,6 +337,8 @@ What we have done here is try to compare a `slice` with a `string`. This makes
 no sense, but the test compiles! So while using `reflect.DeepEqual` is
 a convenient way of comparing slices \(and other things\) you must be careful
 when using it.
+
+(From Go 1.21, [slices](https://pkg.go.dev/slices#pkg-overview) standard package is available, which has [slices.Equal](https://pkg.go.dev/slices#Equal) function to do a simple shallow compare on slices, where you don't need to worry about the types like the above case. Note that this function expects the elements to be [comparable](https://pkg.go.dev/builtin#comparable). So, it can't be applied to slices with non-comparable elements like 2D slices.)  
 
 Change the test back again and run it. You should have test output like the following
 
@@ -480,9 +482,10 @@ panic: runtime error: slice bounds out of range [recovered]
     panic: runtime error: slice bounds out of range
 ```
 
-Oh no! It's important to note the test _has compiled_, it is a runtime error.
-Compile time errors are our friend because they help us write software that
-works, runtime errors are our enemies because they affect our users.
+Oh no! It's important to note that while the test _has compiled_, it _has a runtime error_.  
+
+Compile time errors are our friend because they help us write software that works,  
+runtime errors are our enemies because they affect our users.
 
 ## Write enough code to make it pass
 

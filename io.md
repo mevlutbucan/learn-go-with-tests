@@ -155,8 +155,8 @@ func TestFileSystemStore(t *testing.T) {
 
 	t.Run("league from a reader", func(t *testing.T) {
 		database := strings.NewReader(`[
-            {"Name": "Cleo", "Wins": 10},
-            {"Name": "Chris", "Wins": 33}]`)
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 33}]`)
 
 		store := FileSystemPlayerStore{database}
 
@@ -319,7 +319,7 @@ type FileSystemPlayerStore struct {
 }
 
 func (f *FileSystemPlayerStore) GetLeague() []Player {
-	f.database.Seek(0, 0)
+	f.database.Seek(0, io.SeekStart)
 	league, _ := NewLeague(f.database)
 	return league
 }
@@ -335,8 +335,8 @@ Next we'll implement `GetPlayerScore`.
 //file_system_store_test.go
 t.Run("get player score", func(t *testing.T) {
 	database := strings.NewReader(`[
-        {"Name": "Cleo", "Wins": 10},
-        {"Name": "Chris", "Wins": 33}]`)
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Chris", "Wins": 33}]`)
 
 	store := FileSystemPlayerStore{database}
 
@@ -404,8 +404,8 @@ You will have seen dozens of test helper refactorings so I'll leave this to you 
 //file_system_store_test.go
 t.Run("get player score", func(t *testing.T) {
 	database := strings.NewReader(`[
-        {"Name": "Cleo", "Wins": 10},
-        {"Name": "Chris", "Wins": 33}]`)
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Chris", "Wins": 33}]`)
 
 	store := FileSystemPlayerStore{database}
 
@@ -493,8 +493,8 @@ func TestFileSystemStore(t *testing.T) {
 
 	t.Run("league from a reader", func(t *testing.T) {
 		database, cleanDatabase := createTempFile(t, `[
-            {"Name": "Cleo", "Wins": 10},
-            {"Name": "Chris", "Wins": 33}]`)
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
 
 		store := FileSystemPlayerStore{database}
@@ -515,8 +515,8 @@ func TestFileSystemStore(t *testing.T) {
 
 	t.Run("get player score", func(t *testing.T) {
 		database, cleanDatabase := createTempFile(t, `[
-            {"Name": "Cleo", "Wins": 10},
-            {"Name": "Chris", "Wins": 33}]`)
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
 
 		store := FileSystemPlayerStore{database}
@@ -536,8 +536,8 @@ Let's get the first iteration of recording a win for an existing player
 //file_system_store_test.go
 t.Run("store wins for existing players", func(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, `[
-        {"Name": "Cleo", "Wins": 10},
-        {"Name": "Chris", "Wins": 33}]`)
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Chris", "Wins": 33}]`)
 	defer cleanDatabase()
 
 	store := FileSystemPlayerStore{database}
@@ -586,7 +586,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		}
 	}
 
-	f.database.Seek(0, 0)
+	f.database.Seek(0, io.SeekStart)
 	json.NewEncoder(f.database).Encode(league)
 }
 ```
@@ -646,7 +646,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		player.Wins++
 	}
 
-	f.database.Seek(0, 0)
+	f.database.Seek(0, io.SeekStart)
 	json.NewEncoder(f.database).Encode(league)
 }
 ```
@@ -661,8 +661,8 @@ We now need to handle the scenario of recording wins of new players.
 //file_system_store_test.go
 t.Run("store wins for new players", func(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, `[
-        {"Name": "Cleo", "Wins": 10},
-        {"Name": "Chris", "Wins": 33}]`)
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Chris", "Wins": 33}]`)
 	defer cleanDatabase()
 
 	store := FileSystemPlayerStore{database}
@@ -699,7 +699,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		league = append(league, Player{name, 1})
 	}
 
-	f.database.Seek(0, 0)
+	f.database.Seek(0, io.SeekStart)
 	json.NewEncoder(f.database).Encode(league)
 }
 ```
@@ -718,7 +718,7 @@ store := &FileSystemPlayerStore{database}
 If you run the test it should pass and now we can delete `InMemoryPlayerStore`. `main.go` will now have compilation problems which will motivate us to now use our new store in the "real" code.
 
 ```go
-//main.go
+// main.go
 package main
 
 import (
@@ -765,7 +765,7 @@ type FileSystemPlayerStore struct {
 }
 
 func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
-	database.Seek(0, 0)
+	database.Seek(0, io.SeekStart)
 	league, _ := NewLeague(database)
 	return &FileSystemPlayerStore{
 		database: database,
@@ -802,7 +802,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		f.league = append(f.league, Player{name, 1})
 	}
 
-	f.database.Seek(0, 0)
+	f.database.Seek(0, io.SeekStart)
 	json.NewEncoder(f.database).Encode(f.league)
 }
 ```
@@ -822,7 +822,7 @@ How will we test for this though? What we need to do is first refactor our code 
 We'll create a new type to encapsulate our "when we write we go from the beginning" functionality. I'm going to call it `Tape`. Create a new file with the following:
 
 ```go
-//tape.go
+// tape.go
 package main
 
 import "io"
@@ -832,7 +832,7 @@ type tape struct {
 }
 
 func (t *tape) Write(p []byte) (n int, err error) {
-	t.file.Seek(0, 0)
+	t.file.Seek(0, io.SeekStart)
 	return t.file.Write(p)
 }
 ```
@@ -852,7 +852,7 @@ Update the constructor to use `Tape`
 ```go
 //file_system_store.go
 func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
-	database.Seek(0, 0)
+	database.Seek(0, io.SeekStart)
 	league, _ := NewLeague(database)
 
 	return &FileSystemPlayerStore{
@@ -880,7 +880,7 @@ func TestTape_Write(t *testing.T) {
 
 	tape.Write([]byte("abc"))
 
-	file.Seek(0, 0)
+	file.Seek(0, io.SeekStart)
 	newFileContents, _ := io.ReadAll(file)
 
 	got := string(newFileContents)
@@ -916,7 +916,7 @@ type tape struct {
 
 func (t *tape) Write(p []byte) (n int, err error) {
 	t.file.Truncate(0)
-	t.file.Seek(0, 0)
+	t.file.Seek(0, io.SeekStart)
 	return t.file.Write(p)
 }
 ```
@@ -941,7 +941,7 @@ type FileSystemPlayerStore struct {
 }
 
 func NewFileSystemPlayerStore(file *os.File) *FileSystemPlayerStore {
-	file.Seek(0, 0)
+	file.Seek(0, io.SeekStart)
 	league, _ := NewLeague(file)
 
 	return &FileSystemPlayerStore{
@@ -1011,7 +1011,7 @@ Let's make it so our constructor is capable of returning an error.
 ```go
 //file_system_store.go
 func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error) {
-	file.Seek(0, 0)
+	file.Seek(0, io.SeekStart)
 	league, err := NewLeague(file)
 
 	if err != nil {
@@ -1121,7 +1121,7 @@ Change our constructor to the following
 //file_system_store.go
 func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error) {
 
-	file.Seek(0, 0)
+	file.Seek(0, io.SeekStart)
 
 	info, err := file.Stat()
 
@@ -1131,7 +1131,7 @@ func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error) {
 
 	if info.Size() == 0 {
 		file.Write([]byte("[]"))
-		file.Seek(0, 0)
+		file.Seek(0, io.SeekStart)
 	}
 
 	league, err := NewLeague(file)
@@ -1156,7 +1156,7 @@ Our constructor is a bit messy now, so let's extract the initialise code into a 
 ```go
 //file_system_store.go
 func initialisePlayerDBFile(file *os.File) error {
-	file.Seek(0, 0)
+	file.Seek(0, io.SeekStart)
 
 	info, err := file.Stat()
 
@@ -1166,7 +1166,7 @@ func initialisePlayerDBFile(file *os.File) error {
 
 	if info.Size() == 0 {
 		file.Write([]byte("[]"))
-		file.Seek(0, 0)
+		file.Seek(0, io.SeekStart)
 	}
 
 	return nil
@@ -1210,8 +1210,8 @@ We can update the assertion on our first test in `TestFileSystemStore`:
 //file_system_store_test.go
 t.Run("league sorted", func(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, `[
-        {"Name": "Cleo", "Wins": 10},
-        {"Name": "Chris", "Wins": 33}]`)
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Chris", "Wins": 33}]`)
 	defer cleanDatabase()
 
 	store, err := NewFileSystemPlayerStore(database)
@@ -1220,7 +1220,7 @@ t.Run("league sorted", func(t *testing.T) {
 
 	got := store.GetLeague()
 
-	want := []Player{
+	want := League{
 		{"Chris", 33},
 		{"Cleo", 10},
 	}

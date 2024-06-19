@@ -35,7 +35,7 @@ Here's how we can divide our work up and iterate on it:
 
 ## Write the test first
 
-Our software needs to print to stdout and we saw how we could use DI to facilitate testing this in the DI section.
+Our software needs to print to stdout and we saw how we could use Dependency Injection (DI) to facilitate testing this in the DI section.
 
 ```go
 func TestCountdown(t *testing.T) {
@@ -159,7 +159,7 @@ Go!`
 }
 ```
 
-The backtick syntax is another way of creating a `string` but lets you put things like newlines which is perfect for our test.
+The backtick syntax is another way of creating a `string` but lets you include things like newlines, which is perfect for our test.
 
 ## Try and run the test
 
@@ -631,8 +631,8 @@ Martin Fowler.
 
 Once a developer learns about mocking it becomes very easy to over-test every single facet of a system in terms of the _way it works_ rather than _what it does_. Always be mindful about **the value of your tests** and what impact they would have in future refactoring.
 
-In this post about mocking we have only covered **Spies** which are a kind of mock. The "proper" term for mocks though are "test doubles"
+In this post about mocking we have only covered **Spies**, which are a kind of mock. Mocks are a type of "test double."
 
-[> Test Double is a generic term for any case where you replace a production object for testing purposes.](https://martinfowler.com/bliki/TestDouble.html)
+> [Test Double is a generic term for any case where you replace a production object for testing purposes.](https://martinfowler.com/bliki/TestDouble.html)
 
 Under test doubles, there are various types like stubs, spies and indeed mocks! Check out [Martin Fowler's post](https://martinfowler.com/bliki/TestDouble.html) for more detail.
